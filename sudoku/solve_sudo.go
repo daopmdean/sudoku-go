@@ -1,42 +1,68 @@
 package sudoku
 
-func solveSudoku(board [][]int) bool {
-	for row := 0; row < 9; row++ {
-		for col := 0; col < 9; col++ {
-			if board[row][col] == 0 {
-				for num := 1; num <= 9; num++ {
-					if isValid(board, row, col, num) {
-						board[row][col] = num
-						if solveSudoku(board) {
-							return true
-						}
-						board[row][col] = 0 // backtrack
-					}
-				}
-				return false // if no valid number, trigger backtracking
+import "fmt"
+
+func Solve2(maze [][]int) ([][]int, error) {
+	if err := ValidateInput(maze); err != nil {
+		return nil, err
+	}
+
+	m := makeEmptyMap()
+	for i := range 9 {
+		for j := range 9 {
+			if maze[i][j] != 0 {
+				m[i][j] = []int{maze[i][j]}
+			} else {
+				m[i][j] = findPosibilities(maze, i, j)
 			}
 		}
 	}
-	return true // no empty cells left: puzzle solved
+
+	// m[0] = map[int][]int{}
+	// m[0][0] = []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+	// m[0][1] = []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+	printPosibilities(m)
+
+	return maze, nil
 }
 
-// Step 2: Check if a number is valid in a cell
-func isValid(board [][]int, row, col, num int) bool {
-	// Check row and column
-	for i := 0; i < 9; i++ {
-		if board[row][i] == num || board[i][col] == num {
-			return false
+func makeEmptyMap() map[int]map[int][]int {
+	m := map[int]map[int][]int{}
+	for i := range 9 {
+		m[i] = map[int][]int{}
+	}
+	return m
+}
+
+func printPosibilities(m map[int]map[int][]int) {
+	for i := range 9 {
+		for j := range 9 {
+			fmt.Printf("pos [%d,%d]: %v\n", i, j, m[i][j])
 		}
 	}
-	// Check 3x3 box
-	startRow := (row / 3) * 3
-	startCol := (col / 3) * 3
-	for i := 0; i < 3; i++ {
-		for j := 0; j < 3; j++ {
-			if board[startRow+i][startCol+j] == num {
-				return false
-			}
+}
+
+func findPosibilities(maze [][]int, row, col int) []int {
+	posibilities := []int{}
+	existed := map[int]bool{}
+
+	for i := range 9 {
+		existed[maze[row][i]] = true
+		existed[maze[i][col]] = true
+	}
+
+	startRow, startCol := (row/3)*3, (col/3)*3
+	for i := range 3 {
+		for j := range 3 {
+			existed[maze[startRow+i][startCol+j]] = true
 		}
 	}
-	return true
+
+	for i := 1; i <= 9; i++ {
+		if !existed[i] {
+			posibilities = append(posibilities, i)
+		}
+	}
+
+	return posibilities
 }

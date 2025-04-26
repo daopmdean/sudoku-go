@@ -29,7 +29,3 @@ func Solve(in [][]int) ([][]int, error) {
 
 	return in, nil
 }
-
-func Solve2(in [][]int) ([][]int, error) {
-	return in, nil
-}
