@@ -13,7 +13,7 @@ func Solve2(maze [][]int) ([][]int, error) {
 			if maze[i][j] != 0 {
 				m[i][j] = []int{maze[i][j]}
 			} else {
-				m[i][j] = findPosibilities(maze, i, j)
+				m[i][j] = findPossibilities(maze, i, j)
 			}
 		}
 	}
@@ -42,7 +42,7 @@ func printPosibilities(m map[int]map[int][]int) {
 	}
 }
 
-func findPosibilities(maze [][]int, row, col int) []int {
+func findPossibilities(maze [][]int, row, col int) []int {
 	posibilities := []int{}
 	existed := map[int]bool{}
 
